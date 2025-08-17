@@ -16,14 +16,14 @@ const $turnP2 = document.getElementById('turnP2')
 
 const TARGET = 100
 
-let TURN = 'P1'             // 'P1' | 'P2'
+let TURN = 'P1'
 let TOTAL_P1 = 0
 let TOTAL_P2 = 0
 
 let WINS_P1 = 0
 let WINS_P2 = 0
 
-let roundAccum = 0          // acumulado del turno actual
+let roundAccum = 0
 let DICE = null
 
 $rollBtn.addEventListener('click', onRoll)
@@ -37,7 +37,6 @@ function onRoll() {
   $dice.textContent = DICE
 
   if (DICE === 1) {
-    // BUSTED: pierdes el acumulado del turno
     roundAccum = 0
     updateRoundUI()
     $message.textContent = `${playerName(TURN)} rolled 1! Turn passes.`
@@ -45,20 +44,17 @@ function onRoll() {
     return
   }
 
-  // Suma normal
   roundAccum += DICE
   updateRoundUI()
 
-  // Preview total opcional (si quieres mostrarlo)
   if (TURN === 'P1') {
-    $totalP1.textContent = TOTAL_P1 // deja el total bancado
+    $totalP1.textContent = TOTAL_P1
   } else {
     $totalP2.textContent = TOTAL_P2
   }
 }
 
 function onHold() {
-  // Banco SIEMPRE lo que haya en roundAccum
   if (TURN === 'P1') {
     TOTAL_P1 += roundAccum
     $totalP1.textContent = TOTAL_P1
@@ -69,7 +65,6 @@ function onHold() {
     if (TOTAL_P2 >= TARGET) return onWin('P2')
   }
 
-  // Resetea acumulado y pasa turno
   roundAccum = 0
   updateRoundUI()
   $message.textContent = `${playerName(TURN)} holds. Turn passes.`
@@ -78,7 +73,6 @@ function onHold() {
 
 function onWin(who) {
   $message.textContent = `${playerName(who)} wins! 🎉`
-  // (Opcional) contar victorias por partida
   if (who === 'P1') {
     WINS_P1++
     $roundP1.textContent = WINS_P1
@@ -86,7 +80,6 @@ function onWin(who) {
     WINS_P2++
     $roundP2.textContent = WINS_P2
   }
-  // Deshabilitar controles hasta reset (opcional)
   setControlsEnabled(false)
 }
 
@@ -99,18 +92,13 @@ function onReset() {
 
   initUI()
   setControlsEnabled(true)
-  $message.textContent = "Player 1’s turn."
+  $message.textContent = 'Player 1’s turn.'
 }
 
 function initUI() {
   $dice.textContent = '—'
   $totalP1.textContent = '0'
   $totalP2.textContent = '0'
-  // OJO: aquí usé round labels como “victorias acumuladas”.
-  // Si quieres que $roundP1/$roundP2 muestren el ACUMULADO DEL TURNO,
-  // entonces ponlos en 0 en cada turno (ver updateRoundUI).
-  // Para “wins” mantenlos como están y usa otros IDs para “round actual”.
-  // Por simplicidad, aquí haré que muestren el ACUMULADO DEL TURNO:
   $roundP1.textContent = '0'
   $roundP2.textContent = '0'
 
@@ -119,24 +107,22 @@ function initUI() {
 }
 
 function switchTurn() {
-  // limpia UI de round del jugador que se va
-  updateRoundUI() // ya dejó en 0 el acumulado
+  updateRoundUI()
 
   if (TURN === 'P1') {
     TURN = 'P2'
     $turnP1.textContent = '○'
     $turnP2.textContent = '●'
-    $message.textContent = "Player 2’s turn."
+    $message.textContent = 'Player 2’s turn.'
   } else {
     TURN = 'P1'
     $turnP1.textContent = '●'
     $turnP2.textContent = '○'
-    $message.textContent = "Player 1’s turn."
+    $message.textContent = 'Player 1’s turn.'
   }
 }
 
 function updateRoundUI() {
-  // Muestra el acumulado del turno en la columna del jugador activo
   if (TURN === 'P1') {
     $roundP1.textContent = roundAccum
     $roundP2.textContent = '0'
